@@ -18,6 +18,11 @@ def get_datalader(path_images, path_labels=None, batch_size=32):
 
 
 def plot_results(image, results):
+    """
+    Plot image with bounding boxes and labels
+    :param image: single image
+    :param results: output of the pipeline object for the model
+    """
     # plt.figure(figsize=(16,10))
     plt.imshow(image)
     ax = plt.gca()
