@@ -3,6 +3,14 @@ venv/*
 
 .idea
 
+*.iml
+misc.xml
+modules.xml
+profiles_settings.xml
+Project_Default.xml
+roadcrack-detection.iml
+vcs.xml
+
 
 # Environments
 .env
