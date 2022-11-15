@@ -32,9 +32,12 @@ def create_sample(doc):
     if isinstance(objs, dict):
         objs = [objs]
 
+    annos = 1
     sample["annotations"] = list()
     for obj in objs:
         annotation = {}
+        annotation["id"] = image_id + annos
+        annos += 1
         annotation["image_id"] = image_id
         annotation["category_id"] = categories_names[obj["name"]]
         annotation["bbox"] = [int(float(obj["bndbox"]["xmin"])),
