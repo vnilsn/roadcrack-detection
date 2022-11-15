@@ -10,7 +10,7 @@ COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125], [
 
 def create_sample(doc):
     """
-    Is called by create_metadata
+    Is called by create_metadata in COCO format
 
     Create a sample dictionary from the given xml file
     :param doc: A dictionary containing all sample information
@@ -22,24 +22,30 @@ def create_sample(doc):
     if "object" not in doc:
         return {}  # return empty dict
 
+    image_id = int(doc['filename'][-10:-4])
     sample = dict()
     sample["file_name"] = doc["filename"]
     objects = dict()
-    bbox = list()
     categories = list()
 
     objs = doc["object"]
     if isinstance(objs, dict):
         objs = [objs]
 
+    sample["annotations"] = list()
     for obj in objs:
-        cat = obj["name"]
-        bndbox = obj["bndbox"]
-        bbox.append([float(bndbox["xmin"]), float(bndbox["ymin"]), float(bndbox["xmax"]), float(bndbox["ymax"])])
-        categories.append(categories_names[cat])
-    objects["bbox"] = bbox
-    objects["categories"] = categories
-    sample["objects"] = objects
+        annotation = {}
+        annotation["image_id"] = image_id
+        annotation["category_id"] = categories_names[obj["name"]]
+        annotation["bbox"] = [int(float(obj["bndbox"]["xmin"])),
+                              int(float(obj["bndbox"]["ymin"])),
+                              int(float(obj["bndbox"]["xmax"])) - int(float(obj["bndbox"]["xmin"])),
+                              int(float(obj["bndbox"]["ymax"])) - int(float(obj["bndbox"]["ymin"]))]
+
+        annotation["area"] = annotation["bbox"][2] * annotation["bbox"][3]
+        annotation["iscrowd"] = 0
+        sample["annotations"].append(annotation)
+
     return sample
 
 
@@ -58,11 +64,11 @@ def create_metadata(path_imgs, path_labels):
                 samples.append(sample)
             # move file to directory '../unlabeled'
             else:
-                name = path_imgs[:-7] + 'unlabeled/' + doc['annotation']['filename']
-                Path(path_imgs+doc["annotation"]["filename"]).rename(name)
-
-
-
+                # If doc['annotation']['filename'] in unlabeld directory, do nothing
+                if not Path(path_imgs).joinpath('../unlabeled', doc['annotation']['filename']).exists():
+                    #Path(file).rename(Path(path_imgs).joinpath('../unlabeled', doc['annotation']['filename']))
+                    name = path_imgs[:-7] + 'unlabeled/' + doc['annotation']['filename']
+                    Path(path_imgs + doc["annotation"]["filename"]).rename(name)
 
     filename = path_imgs + "metadata.jsonl"
     with open(filename, 'w') as f:
