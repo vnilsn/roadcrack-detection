@@ -56,6 +56,11 @@ def create_metadata(path_imgs, path_labels):
             sample = create_sample(doc)
             if sample:
                 samples.append(sample)
+            else: # move file to new directory named unlabeled
+                file.rename(Path(path_labels).parent / 'unlabeled' / file.name)
+
+
+
 
     filename = path_imgs + "metadata.jsonl"
     with open(filename, 'w') as f:
