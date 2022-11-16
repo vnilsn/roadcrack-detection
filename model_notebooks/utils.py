@@ -22,9 +22,11 @@ def create_sample(doc):
     if "object" not in doc:
         return {}  # return empty dict
 
-    image_id = int(doc['filename'][-10:-4])
+
     sample = dict()
     sample["file_name"] = doc["filename"]
+    image_id = int(doc['filename'][-10:-4])
+    sample["image_id"] = image_id
     objects = dict()
     categories = list()
 
@@ -36,7 +38,7 @@ def create_sample(doc):
     sample["annotations"] = list()
     for obj in objs:
         annotation = {}
-        annotation["id"] = image_id + annos
+        annotation["id"] = str(image_id + annos)
         annos += 1
         annotation["image_id"] = image_id
         annotation["category_id"] = categories_names[obj["name"]]
