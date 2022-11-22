@@ -16,7 +16,7 @@ def create_sample(doc):
     :param doc: A dictionary containing all sample information
     :return: a dictionary connecting images with objects and bounding boxes
     """
-    doc = doc['annotation']
+    doc = doc['annotations']
     categories_names = {'D00': 0, 'D10': 1, 'D40': 2, 'D20': 3, 'pothole': 4}  # map between category name and int
 
     if "object" not in doc:
