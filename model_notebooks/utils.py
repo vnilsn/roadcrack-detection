@@ -24,11 +24,9 @@ def create_sample(doc):
 
 
     sample = dict()
-    sample["file_name"] = doc["filename"]
+    sample["image"] = doc["filename"]
     image_id = int(doc['filename'][-10:-4])
     sample["image_id"] = image_id
-    objects = dict()
-    categories = list()
 
     objs = doc["object"]
     if isinstance(objs, dict):
@@ -56,6 +54,8 @@ def create_sample(doc):
 
 def create_metadata(path_imgs, path_labels):
     """
+    TODO: Make it work for test data
+
     Writes a metadata file for the given images and labels
     :param path_imgs: full path to the images
     :param path_labels: full path to the labels
@@ -65,33 +65,15 @@ def create_metadata(path_imgs, path_labels):
         with open(file) as fd:
             doc = xmltodict.parse(fd.read(), process_namespaces=True)
             sample = create_sample(doc)
+            sample["image"] = str(Path(path_imgs) / sample["image"])
             if sample:
                 samples.append(sample)
-            # move file to directory '../unlabeled'
-            else:
-                # If doc['annotation']['filename'] in unlabeld directory, do nothing
-                if not Path(path_imgs).joinpath('../unlabeled', doc['annotation']['filename']).exists():
-                    #Path(file).rename(Path(path_imgs).joinpath('../unlabeled', doc['annotation']['filename']))
-                    name = path_imgs[:-7] + 'unlabeled/' + doc['annotation']['filename']
-                    Path(path_imgs + doc["annotation"]["filename"]).rename(name)
 
-    filename = path_imgs + "metadata.jsonl"
+    filename = "metadata.jsonl"
     with open(filename, 'w') as f:
         for item in samples:
             f.write(json.dumps(item) + "\n")
-    print(f"Wrote metadata.jsonl to {path_imgs}")
-
-
-def get_datalader(path_images, path_labels=None, batch_size=32):
-    """
-    Read images and labels from the given
-    paths and return a dataloader
-    :param path_images: filepath to images
-    :param path_labels: filepath to labels, if any
-    :param batch_size:
-    :return: dataloader object ready for training / testing
-    """
-    pass
+    print(f"Wrote metadata.jsonl with {len(samples)} samples to {Path.cwd()}")
 
 
 def plot_results(image, results):
