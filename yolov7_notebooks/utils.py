@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import json
 import xmltodict
 from pathlib import Path
+import os, os.path
 
 def to_yolov7_bbox(bbox, w, h):
     """
@@ -74,3 +75,31 @@ def create_metadata(path_labels, path_yolo_folder):
                 path_file = Path(path_yolo_folder) / filename
                 with open(path_file, "w") as f:
                     f.write("\n".join(sample))
+
+def get_dic(txt_path, mode='preds', img_path='../datasets/Norway/test/images'):
+    file_dic = {}
+
+    for file_name in os.listdir(img_path):
+        new_name = file_name[:-4] + '.txt'
+        file_dic[new_name] = []
+        path = txt_path + '/' + new_name
+        if not os.path.exists(path):
+            with open(path, 'w') as fp:
+                fp.write(" ")
+        else:
+            file = open(path, 'r')
+            lines = file.readlines()
+            for line in lines:
+                line_arr = line.split(' ')
+                if len(line_arr) > 3:
+                    label = int(line_arr[0])
+                    a, b, c, d = line_arr[1:5]
+                    if mode=='preds':
+                        conf = float(line_arr[-1][:-1])
+                        file_dic[new_name].append([label, a, b, c, d, conf])
+                    else:
+                        file_dic[new_name].append([label, a, b, c, d])
+                else: # has no labels
+                    # print(new_name, "NO PRED")
+                    pass
+    return file_dic
