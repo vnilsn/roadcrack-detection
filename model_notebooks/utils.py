@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import json
 import xmltodict
 from pathlib import Path
+import os, os.path
 
 # colors for visualization
 COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125], [0.494, 0.184, 0.556],
@@ -98,3 +99,29 @@ def plot_results(image, results):
                 bbox=dict(facecolor='yellow', alpha=0.5))
     plt.axis('off')
     plt.show()
+
+def get_dic(preds_path, test_path='../datasets/Norway/test/images'):
+    file_dic = {}
+
+    for file_name in os.listdir(test_path):
+        new_name = file_name[:-4] + '.txt'
+        file_dic[new_name] = []
+        path = preds_path + '/' + new_name
+        if not os.path.exists(path):
+            with open(path, 'w') as fp:
+                fp.write(" ")
+        else:
+            file = open(path, 'r')
+            lines = file.readlines()
+            for line in lines:
+                line_arr = line.split(' ')
+                if len(line_arr) > 3:
+                    label = int(line_arr[0])
+                    a, b, c, d = line_arr[1:5]
+                    conf = float(line_arr[-1][:-1])
+                    file_dic[new_name].append([label, a, b, c, d, conf])
+                    # print(new_name, label, conf)
+                else:
+                    # print(new_name, "NO PRED")
+                    pass
+    return file_dic
