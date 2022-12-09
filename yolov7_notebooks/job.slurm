@@ -32,6 +32,6 @@ module load Python/3.8.6-GCCcore-10.2.0
 pip install -r requirements.txt --user -q
 pip install wandb --user -q
 
-wandb login "c20e2fa019f3958082d55153ba1463c147434dec"
+wandb login "something"
 
 python3 train.py --workers 8 --batch-size 32 --epochs 300 --img 1200 --name yolov7_multi_gpu_big --weights 'yolov7_training.pt' --data ../roadcrack.yaml --device 0,1 --hyp data/hyp.scratch.custom.yaml
