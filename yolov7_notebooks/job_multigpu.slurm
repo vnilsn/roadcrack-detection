@@ -32,6 +32,6 @@ module load Python/3.8.6-GCCcore-10.2.0
 pip install -r requirements.txt --user -q
 pip install wandb --user -q
 
-wandb login "c20e2fa019f3958082d55153ba1463c147434dec"
+wandb login "something"
 
 python3 -m torch.distributed.launch --nproc_per_node=2 train.py --batch 32 --name yolov7_multigpu_njc  --epochs 50 --data ../roadcrack.yaml --weights 'yolov7_training.pt' --device 0,1 --workers 24 --img 1000 --cfg cfg/training/yolov7.yaml --hyp data/hyp.scratch.custom.yaml
